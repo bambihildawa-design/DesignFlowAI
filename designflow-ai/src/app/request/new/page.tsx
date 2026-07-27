@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getDefaultOrganization } from "@/auth/public-org";
 import { prisma } from "@/db/client";
 import { TemplatePickerForm } from "./template-picker-form";

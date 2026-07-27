@@ -1,13 +1,12 @@
 "use client";
-export const dynamic = "force-dynamic";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 
-export default function SignInPage() {
+function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -33,54 +32,62 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <form
-        onSubmit={handleSubmit}
-        className="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border bg-surface p-6"
-      >
-        <div>
-          <h1 className="text-lg font-medium">Team sign in</h1>
-          <p className="text-sm text-muted-foreground">
-            Sign in to review requests and manage templates.
-          </p>
-        </div>
-
-        <label className="flex flex-col gap-1.5 text-sm">
-          Email
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-            placeholder="you@company.com"
-          />
-        </label>
-
-        <label className="flex flex-col gap-1.5 text-sm">
-          Password
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="h-9 rounded-md border border-border bg-background px-3 text-sm"
-          />
-        </label>
-
-        {error && <p className="text-sm text-danger">{error}</p>}
-
-        <Button type="submit" disabled={loading}>
-          {loading ? "Signing in…" : "Sign in"}
-        </Button>
-
-        <p className="text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link href="/sign-up" className="text-accent underline-offset-4 hover:underline">
-            Create one
-          </Link>
+    <form
+      onSubmit={handleSubmit}
+      className="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border bg-surface p-6"
+    >
+      <div>
+        <h1 className="text-lg font-medium">Team sign in</h1>
+        <p className="text-sm text-muted-foreground">
+          Sign in to review requests and manage templates.
         </p>
-      </form>
+      </div>
+
+      <label className="flex flex-col gap-1.5 text-sm">
+        Email
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="h-9 rounded-md border border-border bg-background px-3 text-sm"
+          placeholder="you@company.com"
+        />
+      </label>
+
+      <label className="flex flex-col gap-1.5 text-sm">
+        Password
+        <input
+          type="password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="h-9 rounded-md border border-border bg-background px-3 text-sm"
+        />
+      </label>
+
+      {error && <p className="text-sm text-danger">{error}</p>}
+
+      <Button type="submit" disabled={loading}>
+        {loading ? "Signing in…" : "Sign in"}
+      </Button>
+
+      <p className="text-center text-sm text-muted-foreground">
+        Don&apos;t have an account?{" "}
+        <Link href="/sign-up" className="text-accent underline-offset-4 hover:underline">
+          Create one
+        </Link>
+      </p>
+    </form>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <main className="flex min-h-screen items-center justify-center px-6">
+      <Suspense fallback={null}>
+        <SignInForm />
+      </Suspense>
     </main>
   );
 }

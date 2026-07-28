@@ -2,7 +2,6 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 
@@ -74,9 +73,9 @@ function SignInForm() {
 
       <p className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
-        <Link href="/sign-up" className="text-accent underline-offset-4 hover:underline">
+        <a href="/sign-up" className="text-accent underline-offset-4 hover:underline">
           Create one
-        </Link>
+        </a>
       </p>
     </form>
   );

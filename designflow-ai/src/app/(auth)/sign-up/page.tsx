@@ -1,14 +1,13 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 
-function SignInForm() {
+function SignUpForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -20,14 +19,24 @@ function SignInForm() {
     setError(null);
 
     const supabase = createSupabaseBrowserClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error, data } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } },
+    });
 
     setLoading(false);
     if (error) {
       setError(error.message);
       return;
     }
-    router.push(searchParams.get("redirectTo") ?? "/dashboard");
+
+    if (!data.session) {
+      setError("Check your email to confirm your account, then sign in.");
+      return;
+    }
+
+    router.push("/dashboard");
     router.refresh();
   }
 
@@ -37,11 +46,22 @@ function SignInForm() {
       className="flex w-full max-w-sm flex-col gap-4 rounded-xl border border-border bg-surface p-6"
     >
       <div>
-        <h1 className="text-lg font-medium">Team sign in</h1>
+        <h1 className="text-lg font-medium">Create your account</h1>
         <p className="text-sm text-muted-foreground">
-          Sign in to review requests and manage templates.
+          The first person to sign up becomes the team admin.
         </p>
       </div>
+
+      <label className="flex flex-col gap-1.5 text-sm">
+        Name
+        <input
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="h-9 rounded-md border border-border bg-background px-3 text-sm"
+          placeholder="Your name"
+        />
+      </label>
 
       <label className="flex flex-col gap-1.5 text-sm">
         Email
@@ -60,6 +80,7 @@ function SignInForm() {
         <input
           type="password"
           required
+          minLength={8}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="h-9 rounded-md border border-border bg-background px-3 text-sm"
@@ -69,25 +90,9 @@ function SignInForm() {
       {error && <p className="text-sm text-danger">{error}</p>}
 
       <Button type="submit" disabled={loading}>
-        {loading ? "Signing in…" : "Sign in"}
+        {loading ? "Creating account…" : "Create account"}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{" "}
-        <Link href="/sign-up" className="text-accent underline-offset-4 hover:underline">
-          Create one
-        </Link>
-      </p>
-    </form>
-  );
-}
-
-export default function SignInPage() {
-  return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <Suspense fallback={null}>
-        <SignInForm />
-      </Suspense>
-    </main>
-  );
-}
+        Already have an account?{" "}
+        <a href="/sign-in" className="text-accent

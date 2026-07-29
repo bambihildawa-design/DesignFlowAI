@@ -90,9 +90,25 @@ function SignUpForm() {
       {error && <p className="text-sm text-danger">{error}</p>}
 
       <Button type="submit" disabled={loading}>
-        {loading ? "Creating account…" : "Create account"}
+        {loading ? "Creating account..." : "Create account"}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <a href="/sign-in" className="text-accent
+        <a href="/sign-in" className="text-accent underline-offset-4 hover:underline">
+          Sign in
+        </a>
+      </p>
+    </form>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <main className="flex min-h-screen items-center justify-center px-6">
+      <Suspense fallback={null}>
+        <SignUpForm />
+      </Suspense>
+    </main>
+  );
+}
